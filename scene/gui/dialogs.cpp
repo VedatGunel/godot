@@ -56,6 +56,13 @@ void AcceptDialog::_parent_focused() {
 	}
 }
 
+void AcceptDialog::_button_removed(Control *p_spacer) {
+	if (p_spacer) {
+		memdelete(p_spacer);
+		p_spacer = nullptr;
+	}
+}
+
 void AcceptDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -236,15 +243,18 @@ void AcceptDialog::_custom_action(const String &p_action) {
 
 Button *AcceptDialog::add_button(const String &p_text, bool p_right, const String &p_action) {
 	Button *button = memnew(Button);
+	Control *spacer;
 	button->set_text(p_text);
 	if (p_right) {
 		hbc->add_child(button);
-		hbc->add_spacer();
+		spacer = hbc->add_spacer();
 	} else {
 		hbc->add_child(button);
 		hbc->move_child(button, 0);
-		hbc->add_spacer(true);
+		spacer = hbc->add_spacer(true);
 	}
+
+	button->connect("tree_exited", callable_mp(this, &AcceptDialog::_button_removed), varray(spacer), CONNECT_DEFERRED);
 
 	if (p_action != "") {
 		button->connect("pressed", callable_mp(this, &AcceptDialog::_custom_action), varray(p_action));

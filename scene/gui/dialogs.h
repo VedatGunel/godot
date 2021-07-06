@@ -58,6 +58,7 @@ class AcceptDialog : public Window {
 
 	void _input_from_window(const Ref<InputEvent> &p_event);
 	void _parent_focused();
+	void _button_removed(Control *p_spacer);
 
 protected:
 	virtual Size2 _get_contents_minimum_size() const override;
